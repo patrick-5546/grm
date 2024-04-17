@@ -15,7 +15,7 @@ var KnownAliases = map[string]string{
 	"chromedriver": "jsnjack/chromedriver",
 	"geckodriver":  "mozilla/geckodriver",
 	"gotop":        "xxxserxxx/gotop",
-	"grm":          "jsnjack/grm",
+	"grm":          "patrick-5546/grm",
 	"k6":           "grafana/k6",
 	"kazy":         "jsnjack/kazy-go",
 	"mech":         "jsnjack/mech",
