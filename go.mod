@@ -1,4 +1,4 @@
-module github.com/jsnjack/grm
+module github.com/patrick-5546/grm
 
 go 1.19
 

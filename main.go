@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/jsnjack/grm/cmd"
+	"github.com/patrick-5546/grm/cmd"
 )
 
 func main() {
