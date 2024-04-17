@@ -21,7 +21,7 @@ import (
 )
 
 // DefaultBinDir is the default location for binary files
-const DefaultBinDir = "$HOME/.local/bin/"
+const DefaultBinDir = "/.local/bin/"
 
 // DefaultTmpDirPattern is the pattern that is used to generate tmp directory
 // for packages during the installation
@@ -73,7 +73,7 @@ func installBinary(filename string, renameBinaryTo string) (string, error) {
 	if installedBinaryName == "" {
 		installedBinaryName = filepath.Base(filename)
 	}
-	installedFile := fmt.Sprintf("%s%s", DefaultBinDir, installedBinaryName)
+	installedFile := fmt.Sprintf("%s%s%s", os.Getenv("HOME"), DefaultBinDir, installedBinaryName)
 
 	fmt.Printf("Installing %s to %s...\n", strings.TrimPrefix(filename, tmpDir), installedFile)
 
