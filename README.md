@@ -49,7 +49,9 @@ grm install gohugoio/hugo==v0.63.0 -f Linux-64
 ```
 
 ### How to install it?
-> Make sure you have `curl` and `jq` installed (`sudo dnf install curl jq`)
+> Make sure you have `curl` installed (`sudo apt install curl`)
 ```bash
-curl -s https://api.github.com/repos/patrick-5546/grm/releases/latest | jq -r .assets[0].browser_download_url | xargs curl -LOs && chmod +x grm && sudo mv grm $HOME/.local/bin/
+curl -s https://api.github.com/repos/patrick-5546/grm/releases/latest \
+  | awk -F'"' '/"browser_download_url":/{print $4}' | head -n 1 \
+  | xargs curl -LOs && chmod +x grm && mv grm $HOME/.local/bin/
 ```
