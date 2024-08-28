@@ -81,12 +81,12 @@ func installBinary(filename string, renameBinaryTo string) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	cmdCp := exec.Command("/bin/sh", "-c", fmt.Sprintf("sudo cp %s %s", filename, installedFile))
+	cmdCp := exec.Command("/bin/sh", "-c", fmt.Sprintf("cp %s %s", filename, installedFile))
 	err = cmdCp.Run()
 	if err != nil {
 		return "", err
 	}
-	cmd := exec.Command("/bin/sh", "-c", "sudo chmod +x "+installedFile)
+	cmd := exec.Command("/bin/sh", "-c", "chmod +x "+installedFile)
 	err = cmd.Run()
 
 	if strings.HasPrefix(tmpDir, DefaultTmpDirPattern) {
@@ -101,7 +101,7 @@ func installBinary(filename string, renameBinaryTo string) (string, error) {
 }
 
 func removeBinary(filename string) error {
-	cmdRm := exec.Command("/bin/sh", "-c", fmt.Sprintf("sudo rm -f %s", filename))
+	cmdRm := exec.Command("/bin/sh", "-c", fmt.Sprintf("rm -f %s", filename))
 	err := cmdRm.Run()
 	return err
 }
