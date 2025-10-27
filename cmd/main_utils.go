@@ -21,7 +21,7 @@ import (
 )
 
 // DefaultBinDir is the default location for binary files
-const DefaultBinDir = "/.local/bin/"
+const DefaultBinDir = "/bin/"
 
 // DefaultTmpDirPattern is the pattern that is used to generate tmp directory
 // for packages during the installation
@@ -63,6 +63,14 @@ func downloadFile(asset *github.ReleaseAsset, pkg *Package) (string, error) {
 	}
 	fmt.Println("")
 	return path + asset.GetName(), nil
+}
+
+func sudo() string {
+	//_, err := exec.LookPath("sudo")
+	//if err == nil {
+	//	return "sudo "
+	//}
+	return ""
 }
 
 func installBinary(filename string, renameBinaryTo string) (string, error) {

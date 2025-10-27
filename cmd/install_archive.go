@@ -15,13 +15,29 @@ func installArchive(filename string, renameBinaryTo string) (string, error) {
 	fmt.Println("Unpacking archive...", strings.TrimPrefix(filename, tmpDir))
 	err := archiver.Unarchive(filename, tmpDir)
 	if err != nil {
-		return "", err
+		// Check if maybe it is a compressed file
+		dest := filepath.Join(tmpDir, strings.TrimSuffix(filepath.Base(filename), filepath.Ext(filename)))
+		err = archiver.DecompressFile(filename, dest)
+		if err != nil {
+			return "", err
+		}
+		logf("Decompressed to %s\n", dest)
+	} else {
+		logf("Unpacked to %s\n", tmpDir)
 	}
-	logf("Unpacked to %s\n", tmpDir)
 
 	fmt.Println("Looking for a binary file...")
-	filenameA := ""
-	err = filepath.Walk(tmpDir, func(path string, info os.FileInfo, err error) error {
+	filenameA, err := findBinaryFile(tmpDir)
+	if err != nil {
+		return "", err
+	}
+	return installBinary(filenameA, renameBinaryTo)
+}
+
+// findBinaryFile finds a binary file in the given directory
+func findBinaryFile(tmpDir string) (string, error) {
+	var binaryFilepath string
+	err := filepath.Walk(tmpDir, func(path string, info os.FileInfo, err error) error {
 		if err != nil {
 			return err
 		}
@@ -37,8 +53,11 @@ func installArchive(filename string, renameBinaryTo string) (string, error) {
 				ct = "unknown"
 			}
 			fmt.Printf("  %-50s %s\n", strings.TrimPrefix(path, tmpDir), ct)
-			if filenameA == "" && isExecutableFileType(ct) {
-				filenameA = path
+			filename := filepath.Base(path)
+			// Ignore files starting with "._" (macOS), they are not executable
+			// https://github.com/jsnjack/grm/issues/12
+			if binaryFilepath == "" && isExecutableFileType(ct) && !strings.HasPrefix(filename, "._") {
+				binaryFilepath = path
 			}
 		}
 		return nil
@@ -48,8 +67,8 @@ func installArchive(filename string, renameBinaryTo string) (string, error) {
 		return "", err
 	}
 
-	if filenameA == "" {
+	if binaryFilepath == "" {
 		return "", fmt.Errorf("unable to find a binary file in archive")
 	}
-	return installBinary(filenameA, renameBinaryTo)
+	return binaryFilepath, nil
 }
