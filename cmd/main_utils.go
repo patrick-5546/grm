@@ -21,7 +21,7 @@ import (
 )
 
 // DefaultBinDir is the default location for binary files
-const DefaultBinDir = "/.local/bin/"
+const DefaultBinDir = "/bin/"
 
 // DefaultTmpDirPattern is the pattern that is used to generate tmp directory
 // for packages during the installation

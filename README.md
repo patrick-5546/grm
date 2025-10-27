@@ -9,7 +9,7 @@ grm
  - zyedidia/micro
  - ...
 
-`grm` inspects release assets for a binary file and when the file is found, downloads and installs it to `$HOME/.local/bin/` directory.
+`grm` inspects release assets for a binary file and when the file is found, downloads and installs it to `$HOME/bin/` directory.
 
 ### How to use it?
 ```bash
@@ -54,5 +54,5 @@ grm install gohugoio/hugo==v0.63.0 -f Linux-64
 BINARY=grm_<os (linux|darwin)>_<architecture (amd64|arm64)>.tar.gz
 curl -s https://api.github.com/repos/patrick-5546/grm/releases/latest \
   | awk -F'"' '/"browser_download_url":/{print $4}' | grep $BINARY \
-  | xargs curl -LOs && tar -xf $BINARY && rm $BINARY && mv grm $HOME/.local/bin/
+  | xargs curl -LOs && tar -xf $BINARY && rm $BINARY && mv grm $HOME/bin/
 ```
