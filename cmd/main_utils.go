@@ -65,6 +65,14 @@ func downloadFile(asset *github.ReleaseAsset, pkg *Package) (string, error) {
 	return path + asset.GetName(), nil
 }
 
+func sudo() string {
+	//_, err := exec.LookPath("sudo")
+	//if err == nil {
+	//	return "sudo "
+	//}
+	return ""
+}
+
 func installBinary(filename string, renameBinaryTo string) (string, error) {
 	logln("Installing as a binary")
 	tmpDir := getTmpDir(filename)

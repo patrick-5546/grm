@@ -174,6 +174,7 @@ func filterSuitableAssets(input []string, filters []string) []string {
 		filtered = preferToContain(filtered, "64")
 		filtered = preferToContain(filtered, runtime.GOOS+"64")
 		filtered = preferToContain(filtered, "x86_64")
+		filtered = preferToContain(filtered, "x64")
 	}
 	if runtime.GOARCH == "386" {
 		filtered = preferToContain(filtered, "32")
@@ -192,6 +193,8 @@ func filterSuitableAssets(input []string, filters []string) []string {
 	// checksums
 	filtered = exludeExtensions(filtered, ".sha256")
 	filtered = exludeExtensions(filtered, ".sha256sum")
+	filtered = exludeExtensions(filtered, ".md5")
+	filtered = exludeExtensions(filtered, ".sha")
 	return filtered
 }
 
