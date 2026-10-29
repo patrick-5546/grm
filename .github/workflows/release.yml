@@ -1,0 +1,67 @@
+# Publishes a release of this fork when a version tag is pushed. See FORK.md.
+name: Release
+
+on:
+  push:
+    tags: ['v*']
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+    # Upstream's tests expect a Fedora host: rpm is available and dpkg is not.
+    container: fedora:latest
+    steps:
+      - name: Install build tools
+        run: dnf install -y git tar gzip
+
+      - name: Checkout repository
+        uses: actions/checkout@v7
+
+      - name: Set up Go
+        uses: actions/setup-go@v7
+        with:
+          go-version-file: go.mod
+          cache: false
+
+      - name: Test
+        run: go test ./...
+
+  release:
+    name: Release
+    needs: test
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+
+      - name: Set up Go
+        uses: actions/setup-go@v7
+        with:
+          go-version-file: go.mod
+
+      - name: Build
+        run: make build VERSION="${GITHUB_REF_NAME#v}"
+
+      - name: Package
+        run: |
+          for target in linux_amd64 linux_arm64 darwin_amd64 darwin_arm64; do
+            tar --transform='s,_.*,,' --transform='s,bin/,,' -cz -f "bin/grm_${target}.tar.gz" "bin/grm_${target}"
+          done
+
+      - name: Publish
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "$GITHUB_REF_NAME" --title "$GITHUB_REF_NAME" --latest \
+            --notes "Based on [jsnjack/grm $GITHUB_REF_NAME](https://github.com/jsnjack/grm/releases/tag/$GITHUB_REF_NAME). [FORK.md](https://github.com/$GITHUB_REPOSITORY/blob/$GITHUB_REF_NAME/FORK.md) lists the changes in this fork." \
+            bin/grm \
+            bin/grm_linux_amd64.tar.gz \
+            bin/grm_linux_arm64.tar.gz \
+            bin/grm_darwin_amd64.tar.gz \
+            bin/grm_darwin_arm64.tar.gz
