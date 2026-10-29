@@ -67,7 +67,7 @@ release: build
 	tar --transform='s,_.*,,' --transform='s,bin/,,' -cz -f bin/$(BINARY)_linux_arm64.tar.gz bin/$(BINARY)_linux_arm64
 	tar --transform='s,_.*,,' --transform='s,bin/,,' -cz -f bin/$(BINARY)_darwin_amd64.tar.gz bin/$(BINARY)_darwin_amd64
 	tar --transform='s,_.*,,' --transform='s,bin/,,' -cz -f bin/$(BINARY)_darwin_arm64.tar.gz bin/$(BINARY)_darwin_arm64
-	grm release jsnjack/$(BINARY) \
+	grm release patrick-5546/$(BINARY) \
 		-f bin/$(BINARY) \
 		-f bin/$(BINARY)_linux_amd64.tar.gz \
 		-f bin/$(BINARY)_linux_arm64.tar.gz \

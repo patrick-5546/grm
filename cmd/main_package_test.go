@@ -107,8 +107,8 @@ func TestUtils_CreatePackage_alias(t *testing.T) {
 		t.Errorf("Unexpected error: %s", err)
 		return
 	}
-	if p.Owner != "jsnjack" {
-		t.Errorf("Expected jsnjack, got %s", p.Owner)
+	if p.Owner != "patrick-5546" {
+		t.Errorf("Expected patrick-5546, got %s", p.Owner)
 	}
 	if p.Repo != "grm" {
 		t.Errorf("Expected kazy-go, got %s", p.Repo)
@@ -246,8 +246,8 @@ func TestUtils_CreatePackage_aliasWithVersionFilter(t *testing.T) {
 		t.Errorf("Unexpected error: %s", err)
 		return
 	}
-	if p.Owner != "jsnjack" {
-		t.Errorf("Expected jsnjack, got %s", p.Owner)
+	if p.Owner != "patrick-5546" {
+		t.Errorf("Expected patrick-5546, got %s", p.Owner)
 	}
 	if p.Repo != "grm" {
 		t.Errorf("Expected grm, got %s", p.Repo)
@@ -313,8 +313,8 @@ func TestUtils_CreatePackage_aliasAtVersion(t *testing.T) {
 		t.Errorf("Unexpected error: %s", err)
 		return
 	}
-	if p.Owner != "jsnjack" {
-		t.Errorf("Expected jsnjack, got %s", p.Owner)
+	if p.Owner != "patrick-5546" {
+		t.Errorf("Expected patrick-5546, got %s", p.Owner)
 	}
 	if p.Repo != "grm" {
 		t.Errorf("Expected grm, got %s", p.Repo)
@@ -330,8 +330,8 @@ func TestUtils_CreatePackage_alias_with_version(t *testing.T) {
 		t.Errorf("Unexpected error: %s", err)
 		return
 	}
-	if p.Owner != "jsnjack" {
-		t.Errorf("Expected jsnjack, got %s", p.Owner)
+	if p.Owner != "patrick-5546" {
+		t.Errorf("Expected patrick-5546, got %s", p.Owner)
 	}
 	if p.Repo != "grm" {
 		t.Errorf("Expected kazy-go, got %s", p.Repo)
