@@ -10,6 +10,7 @@ import (
 	"net/http"
 	"os"
 	"os/exec"
+	"path/filepath"
 	"strings"
 	"time"
 
@@ -75,6 +76,10 @@ func runPrivileged(program string, args ...string) error {
 			program = "sudo"
 		}
 	}
+	return runCommand(program, args...)
+}
+
+func runCommand(program string, args ...string) error {
 	cmd := exec.Command(program, args...)
 	cmd.Stdout, cmd.Stderr = os.Stdout, os.Stderr
 	if err := cmd.Run(); err != nil {
@@ -83,21 +88,44 @@ func runPrivileged(program string, args ...string) error {
 	return nil
 }
 
+// binaryRunner returns the runner for file operations in dir. It uses sudo
+// only when the current user cannot create files in dir, so binaries in a
+// user-owned directory such as ~/.local/bin keep the user's ownership.
+func binaryRunner(dir string) func(string, ...string) error {
+	if isWritableDir(dir) {
+		return runCommand
+	}
+	return runPrivileged
+}
+
+func isWritableDir(dir string) bool {
+	probe, err := os.CreateTemp(dir, ".grm-probe-")
+	if err != nil {
+		return false
+	}
+	logClose(probe)
+	if err := os.Remove(probe.Name()); err != nil {
+		slog.Log(context.Background(), LevelTrace, "remove write probe", "path", probe.Name(), "err", err)
+	}
+	return true
+}
+
 func installBinaryTo(filename, installedFile string) error {
 	msgStep("Installing %s %s %s", bold(filename), cyan(sArrow), bold(installedFile))
+	run := binaryRunner(filepath.Dir(installedFile))
 	staged := installedFile + ".grm-" + generateRandomString(6)
 	defer func() {
 		if err := removeBinary(staged); err != nil {
 			slog.Log(context.Background(), LevelTrace, "remove staged binary", "path", staged, "err", err)
 		}
 	}()
-	if err := runPrivileged("cp", "--", filename, staged); err != nil {
+	if err := run("cp", "--", filename, staged); err != nil {
 		return fmt.Errorf("stage %s: %w", installedFile, err)
 	}
-	if err := runPrivileged("chmod", "755", staged); err != nil {
+	if err := run("chmod", "755", staged); err != nil {
 		return fmt.Errorf("chmod %s: %w", staged, err)
 	}
-	if err := runPrivileged("mv", "-f", "--", staged, installedFile); err != nil {
+	if err := run("mv", "-f", "--", staged, installedFile); err != nil {
 		return fmt.Errorf("replace %s: %w", installedFile, err)
 	}
 	return nil
@@ -107,7 +135,7 @@ func removeBinary(filename string) error {
 	if filename == "" {
 		return fmt.Errorf("cannot remove an empty binary path")
 	}
-	if err := runPrivileged("rm", "-f", "--", filename); err != nil {
+	if err := binaryRunner(filepath.Dir(filename))("rm", "-f", "--", filename); err != nil {
 		return fmt.Errorf("remove %s: %w", filename, err)
 	}
 	return nil
